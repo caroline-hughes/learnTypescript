@@ -11,9 +11,16 @@ export default class Ship {
   constructor(crew: Venusian[], daughters: Ship[]) {
     this.crew = crew;
     this.daughters = daughters;
-    // https://gist.github.com/therightstuff/9f83967b9c23354a27ed691a6b591b0c
+    // idea from https://gist.github.com/therightstuff/9f83967b9c23354a27ed691a6b591b0c
     this.usn = Buffer.from(uuidv4()).readUInt32BE(0);
   }
+
+  // constructor(crew: Venusian[], daughters: Ship[], usn: number) {
+  //   this.crew = crew;
+  //   this.daughters = daughters;
+  //   this.usn = usn;
+  // }
+
 
   getCrew(): Venusian[] {
     return this.crew;
@@ -84,13 +91,39 @@ export default class Ship {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  fleetHasDuplicates(): boolean {
-    return false;
+  // go through serial numbers recursively and add them to an array
+  addNumbersToArr(arr: number[]): number[] {
+    if (!this.daughters.length) {
+      return arr;
+    }
+    this.daughters.forEach(d => {
+      arr.push(d.getSerialNumber());
+      d.addNumbersToArr(arr);
+    });
+    return arr;
   }
 
+  // Given a ship, determines whether there are any duplicates among the ship and its fleet.
+  fleetHasDuplicates(): boolean {
+    const arr: number[] = this.addNumbersToArr([this.usn]);
+    // console.log('arr', arr);
+
+    for (let i = 0; i < arr.length; i += 1) {
+      for (let j = i + 1; j < arr.length; j += 1)  {
+        if (arr[i] === arr[j]) return true;
+      }
+    }
+    return false;
+  }
 }
 
+// const ship4 = new Ship([], [], 3);
+// const ship3 = new Ship([], [], 3);
+// const ship2 = new Ship([], [ship3, ship4], 0);
+// const ship1 = new Ship([], [ship2], 1);
+// console.log(ship1.fleetHasDuplicates());
+// console.log('fleetHasDuplicates ?! ', ship1.fleetHasDuplicates())
 
-// const sh = new Ship([], []);
-// console.log('ship:', sh);
+// go through serial numbers recursively and add them to an array
+// add the array to a set
+

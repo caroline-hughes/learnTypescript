@@ -1,12 +1,16 @@
 "use strict";
 exports.__esModule = true;
-var uuid_1 = require("uuid");
 var Ship = /** @class */ (function () {
-    function Ship(crew, daughters) {
+    // constructor(crew: Venusian[], daughters: Ship[]) {
+    //   this.crew = crew;
+    //   this.daughters = daughters;
+    //   // idea from https://gist.github.com/therightstuff/9f83967b9c23354a27ed691a6b591b0c
+    //   this.usn = Buffer.from(uuidv4()).readUInt32BE(0);
+    // }
+    function Ship(crew, daughters, usn) {
         this.crew = crew;
         this.daughters = daughters;
-        // https://gist.github.com/therightstuff/9f83967b9c23354a27ed691a6b591b0c
-        this.usn = Buffer.from((0, uuid_1.v4)()).readUInt32BE(0);
+        this.usn = usn;
     }
     Ship.prototype.getCrew = function () {
         return this.crew;
@@ -70,12 +74,38 @@ var Ship = /** @class */ (function () {
             ship.removeDeepWaldos();
         });
     };
-    // eslint-disable-next-line class-methods-use-this
+    // go through serial numbers recursively and add them to an array
+    Ship.prototype.addNumbersToArr = function (arr) {
+        if (!this.daughters.length) {
+            return arr;
+        }
+        this.daughters.forEach(function (d) {
+            arr.push(d.getSerialNumber());
+            d.addNumbersToArr(arr);
+        });
+        // console.log('do we get here?')
+        return arr;
+    };
+    // Given a ship, determines whether there are any duplicates among the ship and its fleet.
     Ship.prototype.fleetHasDuplicates = function () {
+        var arr = this.addNumbersToArr([this.usn]);
+        console.log('arr', arr);
+        for (var i = 0; i < arr.length; i++) {
+            for (var j = i + 1; j < arr.length; j++) {
+                if (arr[i] === arr[j])
+                    return true;
+            }
+        }
         return false;
     };
     return Ship;
 }());
 exports["default"] = Ship;
-// const sh = new Ship([], []);
-// console.log('ship:', sh);
+var ship4 = new Ship([], [], 3);
+var ship3 = new Ship([], [], 3);
+var ship2 = new Ship([], [ship3, ship4], 0);
+var ship1 = new Ship([], [ship2], 1);
+console.log(ship1.fleetHasDuplicates());
+// console.log('fleetHasDuplicates ?! ', ship1.fleetHasDuplicates())
+// go through serial numbers recursively and add them to an array
+// add the array to a set
