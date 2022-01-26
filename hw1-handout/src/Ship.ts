@@ -15,13 +15,6 @@ export default class Ship {
     this.usn = Buffer.from(uuidv4()).readUInt32BE(0);
   }
 
-  // constructor(crew: Venusian[], daughters: Ship[], usn: number) {
-  //   this.crew = crew;
-  //   this.daughters = daughters;
-  //   this.usn = usn;
-  // }
-
-
   getCrew(): Venusian[] {
     return this.crew;
   }
@@ -91,7 +84,7 @@ export default class Ship {
     });
   }
 
-  // go through serial numbers recursively and add them to an array
+  // Go through serial numbers recursively and add them to an array
   addNumbersToArr(arr: number[]): number[] {
     if (!this.daughters.length) {
       return arr;
@@ -105,9 +98,10 @@ export default class Ship {
 
   // Given a ship, determines whether there are any duplicates among the ship and its fleet.
   fleetHasDuplicates(): boolean {
+    // Get array with all of this fleet's serial nums
     const arr: number[] = this.addNumbersToArr([this.usn]);
-    // console.log('arr', arr);
 
+    // Iterate through array to check for duplicates
     for (let i = 0; i < arr.length; i += 1) {
       for (let j = i + 1; j < arr.length; j += 1)  {
         if (arr[i] === arr[j]) return true;
@@ -116,14 +110,4 @@ export default class Ship {
     return false;
   }
 }
-
-// const ship4 = new Ship([], [], 3);
-// const ship3 = new Ship([], [], 3);
-// const ship2 = new Ship([], [ship3, ship4], 0);
-// const ship1 = new Ship([], [ship2], 1);
-// console.log(ship1.fleetHasDuplicates());
-// console.log('fleetHasDuplicates ?! ', ship1.fleetHasDuplicates())
-
-// go through serial numbers recursively and add them to an array
-// add the array to a set
 

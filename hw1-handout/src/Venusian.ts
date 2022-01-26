@@ -19,6 +19,7 @@ export default class Venusian {
     return this.vsn;
   }
 
+  // is this Venusian named Waldo
   isWaldo(): boolean {
     return this.getName() === 'Waldo';
   }
